@@ -6,12 +6,12 @@ import { DiceRoller } from './DiceRoller';
 import { MessageList } from './MessageList';
 import type { Database } from '@/types/database.types';
 
-type Message = Database['public']['Tables']['messages']['Row'] & {
-  profiles: {
+type Message = Database['public']['Tables']['dndchat_messages']['Row'] & {
+  dndchat_profiles: {
     display_name: string | null;
     username: string | null;
   } | null;
-  dice_rolls: Database['public']['Tables']['dice_rolls']['Row'][];
+  dndchat_dice_rolls: Database['public']['Tables']['dndchat_dice_rolls']['Row'][];
 };
 
 export function ChatRoom({ roomId, userId }: { roomId: string; userId: string }) {
@@ -36,12 +36,12 @@ export function ChatRoom({ roomId, userId }: { roomId: string; userId: string })
   const loadMessages = async () => {
     const supabase = createClient();
     const { data } = await supabase
-      .from('messages')
+      .from('dndchat_messages')
       .select(
         `
         *,
-        profiles:user_id(display_name, username),
-        dice_rolls(*)
+        dndchat_profiles:user_id(display_name, username),
+        dndchat_dice_rolls(*)
       `
       )
       .eq('chat_room_id', roomId)
@@ -62,18 +62,18 @@ export function ChatRoom({ roomId, userId }: { roomId: string; userId: string })
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'messages',
+          table: 'dndchat_messages',
           filter: `chat_room_id=eq.${roomId}`,
         },
         async (payload) => {
           // Fetch the full message with relations
           const { data } = await supabase
-            .from('messages')
+            .from('dndchat_messages')
             .select(
               `
               *,
-              profiles:user_id(display_name, username),
-              dice_rolls(*)
+              dndchat_profiles:user_id(display_name, username),
+              dndchat_dice_rolls(*)
             `
             )
             .eq('id', payload.new.id)
@@ -96,7 +96,7 @@ export function ChatRoom({ roomId, userId }: { roomId: string; userId: string })
     if (!newMessage.trim()) return;
 
     const supabase = createClient();
-    await supabase.from('messages').insert({
+    await supabase.from('dndchat_messages').insert({
       chat_room_id: roomId,
       user_id: userId,
       content: newMessage,
@@ -111,7 +111,7 @@ export function ChatRoom({ roomId, userId }: { roomId: string; userId: string })
 
     // Insert message
     const { data: message } = await supabase
-      .from('messages')
+      .from('dndchat_messages')
       .insert({
         chat_room_id: roomId,
         user_id: userId,
@@ -123,7 +123,7 @@ export function ChatRoom({ roomId, userId }: { roomId: string; userId: string })
 
     if (message) {
       // Insert dice roll data
-      await supabase.from('dice_rolls').insert({
+      await supabase.from('dndchat_dice_rolls').insert({
         message_id: message.id,
         dice_notation: notation,
         individual_rolls: result.rolls,

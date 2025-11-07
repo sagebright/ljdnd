@@ -9,7 +9,7 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      chat_rooms: {
+      dndchat_chat_rooms: {
         Row: {
           id: string
           name: string
@@ -29,7 +29,7 @@ export interface Database {
           updated_at?: string
         }
       }
-      chat_room_participants: {
+      dndchat_chat_room_participants: {
         Row: {
           id: string
           chat_room_id: string
@@ -49,7 +49,7 @@ export interface Database {
           joined_at?: string
         }
       }
-      messages: {
+      dndchat_messages: {
         Row: {
           id: string
           chat_room_id: string
@@ -75,7 +75,7 @@ export interface Database {
           created_at?: string
         }
       }
-      dice_rolls: {
+      dndchat_dice_rolls: {
         Row: {
           id: string
           message_id: string
@@ -104,7 +104,7 @@ export interface Database {
           created_at?: string
         }
       }
-      profiles: {
+      dndchat_profiles: {
         Row: {
           id: string
           username: string | null

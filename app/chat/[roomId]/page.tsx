@@ -19,7 +19,7 @@ export default async function ChatRoomPage({
 
   // Verify user has access to this room
   const { data: participant } = await supabase
-    .from('chat_room_participants')
+    .from('dndchat_chat_room_participants')
     .select('*')
     .eq('chat_room_id', roomId)
     .eq('user_id', user.id)

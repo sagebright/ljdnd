@@ -26,13 +26,13 @@ export function ChatRoomList({ userId }: { userId: string }) {
   const loadRooms = async () => {
     const supabase = createClient();
     const { data } = await supabase
-      .from('chat_room_participants')
-      .select('chat_rooms(id, name, created_at)')
+      .from('dndchat_chat_room_participants')
+      .select('dndchat_chat_rooms(id, name, created_at)')
       .eq('user_id', userId);
 
     if (data) {
       const roomsData = data
-        .map((item: any) => item.chat_rooms)
+        .map((item: any) => item.dndchat_chat_rooms)
         .filter(Boolean);
       setRooms(roomsData);
     }
@@ -49,7 +49,7 @@ export function ChatRoomList({ userId }: { userId: string }) {
     try {
       // Create the room
       const { data: room, error: roomError } = await supabase
-        .from('chat_rooms')
+        .from('dndchat_chat_rooms')
         .insert({ name: newRoomName })
         .select()
         .single();
@@ -60,14 +60,14 @@ export function ChatRoomList({ userId }: { userId: string }) {
       }
 
       // Add current user as participant
-      await supabase.from('chat_room_participants').insert({
+      await supabase.from('dndchat_chat_room_participants').insert({
         chat_room_id: room.id,
         user_id: userId,
       });
 
       // Look up the invited user by email
       const { data: profiles } = await supabase
-        .from('profiles')
+        .from('dndchat_profiles')
         .select('id')
         .eq('username', inviteEmail)
         .single();

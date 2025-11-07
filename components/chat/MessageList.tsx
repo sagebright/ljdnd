@@ -2,12 +2,12 @@
 
 import type { Database } from '@/types/database.types';
 
-type Message = Database['public']['Tables']['messages']['Row'] & {
-  profiles: {
+type Message = Database['public']['Tables']['dndchat_messages']['Row'] & {
+  dndchat_profiles: {
     display_name: string | null;
     username: string | null;
   } | null;
-  dice_rolls: Database['public']['Tables']['dice_rolls']['Row'][];
+  dndchat_dice_rolls: Database['public']['Tables']['dndchat_dice_rolls']['Row'][];
 };
 
 export function MessageList({
@@ -22,8 +22,8 @@ export function MessageList({
       {messages.map((message) => {
         const isOwnMessage = message.user_id === currentUserId;
         const displayName =
-          message.profiles?.display_name ||
-          message.profiles?.username ||
+          message.dndchat_profiles?.display_name ||
+          message.dndchat_profiles?.username ||
           'Unknown User';
 
         return (
@@ -40,9 +40,9 @@ export function MessageList({
             >
               <div className="text-xs opacity-75 mb-1">{displayName}</div>
               <div className="text-sm">{message.content}</div>
-              {message.dice_rolls && message.dice_rolls.length > 0 && (
+              {message.dndchat_dice_rolls && message.dndchat_dice_rolls.length > 0 && (
                 <div className="mt-2 pt-2 border-t border-white/20 dark:border-gray-700">
-                  {message.dice_rolls.map((roll) => (
+                  {message.dndchat_dice_rolls.map((roll) => (
                     <div key={roll.id} className="text-xs">
                       <div>
                         Rolls:{' '}
